@@ -1,19 +1,7 @@
 <?  require "inc/init.php"; //auto load
 
-    $books = [
-        ['title' => 'John Lenno',
-            'description' => 'Rhythm Guitar',
-            'author' => 'abc',
-            'imagefile' => 'php.jpg'],
-        ['title' => 'John Lenno',
-            'description' => 'Rhythm Guitar',
-            'author' => 'abc',
-            'imagefile' => 'php.jpg'],
-        ['title' => 'John Lenno',
-            'description' => 'Rhythm Guitar',
-            'author' => 'abc',
-            'imagefile' => 'php.jpg'],
-    ];
+    $conn = require("inc/db.php");
+    $books = Book::getAll($conn);
 
     require "inc/header.php";
 ?>
@@ -32,16 +20,23 @@
         </thead>
         <!-- cac dong du lieu o day -->
         <tbody>
-            <? foreach($books as $b => $v):?>
+            <? static $i = 1;?>
+            <? foreach($books as $b):?>
                 <tr>
-                    <td><? echo $b + 1 ?></td>
-                    <td><? echo $v['title']?></td>
-                    <td><? echo $v['description']?></td>
-                    <td><? echo $v['author']?></td>
-                    <td>
-                        <img src="uploads/ <? echo $v['imagefile']?>"
-                            width=120 height=120>
-        
+                    <td><? echo $i++ ?></td>
+                    <td><? echo $b->title?></td>
+                    <td><? echo $b->description?></td>
+                    <td><? echo $b->author?></td>
+                    <td> 
+                        <? if (Auth::isLoggedIn()):?>
+                            <div class="row">
+                                <a href="editbook.php" class="btn">Sửa</a>
+                                <a href="delbook.php" class="btn">xóa</a>
+                            </div>
+                        <? else: ?>
+                            <img src="uploads/<? echo $b->imagefile?>" 
+                                width="100" height="100">
+                        <? endif;?>
                     </td>
                 </tr>
             <?endforeach;?>

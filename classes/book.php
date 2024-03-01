@@ -1,12 +1,12 @@
 <?
     class Book{
-        private $id;
-        private $title;
-        private $description;
-        private $author;
-        private $imagefile;
+        public $id;
+        public $title;
+        public $description;
+        public $author;
+        public $imagefile;
 
-        public function __construct($title, $description, $author, $imagefile) {
+        public function __construct($title = null, $description = null, $author = null, $imagefile = null) {
             $this->title = $title;
             $this->description = $description;
             $this->author = $author;
@@ -19,16 +19,12 @@
                     && $this->author !='';
         }
 
-        public static function count() {
-
-        }
-
         public function add(){
             if ($this->validate()) {
                 try{
                     $sql = "insert into books (title, description, author, imagefile)
                     values(:title, :description, :author, :imagefile)";
-                    $stmt = $conn->prepare(&sql);
+                    $stmt = $conn->prepare($sql);
                     $stmt->bindValue(':title', $this->$title,
                                     PDO::PARAM_STR);
                     $stmt->bindValue(':description', $this->$description,
@@ -52,8 +48,8 @@
         public static function getALL($conn) {
             try{
                 $sql = "select * from books order by title asc";
-                $stmt = $conn->prepare(&sql);
-                $stmt->setFetchMode(PDO::FETCH_CLASS, 'Book');
+                $stmt = $conn->prepare($sql);
+                $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Book');
                 if ($stmt-> execute()) {
                     $books = $stmt->fetchAll();
                     return $books;
@@ -67,7 +63,7 @@
         public function getbyID($conn, $id){
             try{
                 $sql = "select * from books where id=:id";
-                $stmt = $conn->prepare(&sql);
+                $stmt = $conn->prepare($sql);
                 $stmt->bindValue(':id', $this->$id, PDO::PARAM_INT);
                 $stmt->setFetchMode(PDO::FETCH_CLASS, 'Book');
                 if ($stmt-> execute()) {
@@ -106,7 +102,7 @@
                         author=:author,
                         imagefile=:imagafile
                         where id=:id";
-                $stmt = $conn->prepare(&sql);
+                $stmt = $conn->prepare($sql);
                 $stmt->bindValue(':title', $this->title, PDO::PARAM_STR);
                 $stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
                 $stmt->bindValue(':author', $this->author, PDO::PARAM_STR);
@@ -114,7 +110,7 @@
                 $stmt->bindValue(':imagefile', $this->imagefile, PDO::PARAM_STR);
 
 
-                $stmt->
+                // $stmt->
 
                 
             } catch(PDOException $e) {
@@ -132,12 +128,15 @@
                 $stmt->bindValue(':imagefile', $imagefile,
                                 $imagefile == NULL ?
                                 PDO::PARAM_NULL : PDO::PARAM_STR);
+            } catch(PDOException $e) {
+                echo $e->getMessage();
+                return false;
             }
         }
 
-        public function delete() {
+        // public function delete() {
 
-        }
+        // }
 
         public static function count($conn) {
             try{
